@@ -34,7 +34,7 @@ struct ContentView: View {
                             }
                             .foregroundColor(item.amount < 10 ? .black : item.amount < 100 ? .blue : .red)
                         }
-                        .onDelete(perform: removeItem)
+                        .onDelete(perform: {removeItem(at: $0, type: "Personal")})
                     }
                 } header: {
                     Text("Personal")
@@ -53,7 +53,7 @@ struct ContentView: View {
                             }
                             .foregroundColor(item.amount < 10 ? .black : item.amount < 100 ? .blue : .red)
                         }
-                        .onDelete(perform: removeItem)
+                        .onDelete(perform: {removeItem(at: $0, type: "Business")})
                     }
                 } header: {
                     Text("Business")
@@ -72,8 +72,13 @@ struct ContentView: View {
             AddView(expenses: expenses)
         }
     }
-    func removeItem(at offsets: IndexSet) {
-        expenses.items.remove(atOffsets: offsets)
+    func removeItem(at offsets: IndexSet, type: String) {
+        for i in offsets {
+            let deletedItem = expenses.items.filter { $0.type == type }[i]
+            if let index = expenses.items.firstIndex(where: { $0.id == deletedItem.id }) {
+                expenses.items.remove(at: index)
+            }
+        }
     }
 }
 
